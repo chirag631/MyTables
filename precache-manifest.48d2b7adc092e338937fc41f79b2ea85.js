@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "da3172291af93dd5f72bd970b2c2ea19",
+    "revision": "44e429b1ca306b685536e3c7a89e3ec3",
     "url": "/MyTables/index.html"
   },
   {
@@ -8,8 +8,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/MyTables/static/css/2.3c03f26f.chunk.css"
   },
   {
-    "revision": "f4f064fb7750c58fbb19",
-    "url": "/MyTables/static/css/main.66ddf15b.chunk.css"
+    "revision": "d7e993c669ec284cbbc1",
+    "url": "/MyTables/static/css/main.666c0f3c.chunk.css"
   },
   {
     "revision": "c7e39d06b60739c40885",
@@ -20,7 +20,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/MyTables/static/js/2.59a23a31.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "f4f064fb7750c58fbb19",
+    "revision": "d7e993c669ec284cbbc1",
     "url": "/MyTables/static/js/main.c6b8e72d.chunk.js"
   },
   {
