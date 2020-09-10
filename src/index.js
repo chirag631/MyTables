@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Selection_and_sorting from './Selection_and_sorting';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Selection_and_sorting />
   </React.StrictMode>,
   document.getElementById('root')
 );
