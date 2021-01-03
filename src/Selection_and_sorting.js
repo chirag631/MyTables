@@ -1,8 +1,8 @@
-import React from 'react';
+import React,{useState} from 'react';
 import 'tachyons';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { lighten, makeStyles } from '@material-ui/core/styles';
+import {withStyles, lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -25,6 +25,12 @@ import { TextField } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import './MainStyle.css';
 import InputAdornment from '@material-ui/core/InputAdornment';
+//import {Route, Switch,Link,Redirect  } from "react-router-dom";
+import About from './About';
+import TablePart from "./TablePart";
+//import {povider,Provider} from "react-redux";
+
+
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -79,6 +85,9 @@ const headCells = [
   { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
   { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
   { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
+  
+  { id: 'view', numeric: true, disablePadding: false, label: 'Details' },
+  
 ];
 
 function EnhancedTableHead(props) {
@@ -116,6 +125,7 @@ function EnhancedTableHead(props) {
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                 </span>
               ) : null}
+              
             </TableSortLabel>
           </TableCell>
         ))}
@@ -174,22 +184,14 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip >
-          <TextField  className="ma-4 pa-4" id="outlined-search" label="Search field"
-           type="search" variant="outlined"   />
-            
-        </Tooltip>
-      )}
+      
+        
+        
     </Toolbar>
   );
 };
+
+
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
@@ -207,7 +209,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 750,
   },
   container: {
-    maxHeight: 440,
+    maxHeight: 260,
   },
   visuallyHidden: {
     border: 0,
@@ -232,26 +234,89 @@ export default function EnhancedTable() {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows,setRows] =React.useState({
-    data : [
-      createData('Cupcake', 305, 3.7, 67, 4.3),
-      createData('Donut', 452, 25.0, 51, 4.9),
-      createData('Eclair', 262, 16.0, 24, 6.0),
-      createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-      createData('Gingerbread', 356, 16.0, 49, 3.9),
-      createData('Honeycomb', 408, 3.2, 87, 6.5),
-      createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-      createData('Jelly Bean', 375, 0.0, 94, 0.0),
-      createData('KitKat', 518, 26.0, 65, 7.0),
-      createData('Lollipop', 392, 0.2, 98, 0.0),
-      createData('Marshmallow', 318, 0, 81, 2.0),
-      createData('Nougat', 360, 19.0, 9, 37.0),
-      createData('Oreo', 437, 18.0, 63, 4.0),
-    ],
-    query:[],
-    
-  })
+  const [rowsPerPage, setRowsPerPage] = React.useState(6);
+ 
+  const [data,setdata]=useState(rows);
+  const [q,setQ] = useState("");
+
+  
+
+  const search = (rowss) =>{
+
+
+    return(
+      rowss.filter(row=>{
+      return(
+
+        row.name.toString().toLowerCase().indexOf(q) > -1 ||
+        row.calories.toString().toLowerCase().indexOf(q) > -1 ||
+        row.fat.toString().toLowerCase().indexOf(q) > -1 ||
+        row.carbs.toString().toLowerCase().indexOf(q) > -1 ||
+        row.protein.toString().toLowerCase().indexOf(q) > -1 
+      );
+    })
+
+
+    );
+  }
+
+  EnhancedTableHead.propTypes = {
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired,
+  };
+  
+  const useToolbarStyles = makeStyles((theme) => ({
+    root: {
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(1),
+    },
+    highlight:
+      theme.palette.type === 'light'
+        ? {
+            color: theme.palette.secondary.main,
+            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+          }
+        : {
+            color: theme.palette.text.primary,
+            backgroundColor: theme.palette.secondary.dark,
+          },
+    title: {
+      flex: '1 1 100%',
+    },
+  }));
+  
+  const EnhancedTableToolbar = (props) => {
+    const classes = useToolbarStyles();
+    const { numSelected } = props;
+  
+    return (
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: numSelected > 0,
+        })}
+      >
+        {numSelected > 0 ? (
+          <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+            Nutrition
+          </Typography>
+        )}
+  
+          
+          
+      </Toolbar>
+    );
+  };
+
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -305,6 +370,8 @@ export default function EnhancedTable() {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+
+
   return (
     
 
@@ -313,6 +380,12 @@ export default function EnhancedTable() {
       <div><h1 >My Table</h1><br/></div>
       <Paper className={classes.paper} >
         <EnhancedTableToolbar numSelected={selected.length} />
+        
+        <div class="fl w-50">
+        <TextField  fullWidth className="ma-10 pa-4" id="outlined-search" label="Search Name"
+           type="search" style={{ margin:18 }} variant="outlined" value={q} onChange={(e) => setQ(e.target.value)}   />
+           </div>
+        
         <TableContainer className={classes.container} >
           <Table
             stickyHeader aria-label="sticky table"
@@ -331,7 +404,7 @@ export default function EnhancedTable() {
               rowCount={rows.length}
             />
             <TableBody>
-              {stableSort(rows.data, getComparator(order, orderBy))
+              {stableSort(search(data), getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.name);
@@ -361,6 +434,11 @@ export default function EnhancedTable() {
                       <TableCell align="right">{row.fat}</TableCell>
                       <TableCell align="right">{row.carbs}</TableCell>
                       <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="right">
+                        
+                          View
+                          
+                         </TableCell>
                     </TableRow>
                   );
                 })}
@@ -373,7 +451,7 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          rowsPerPageOptions={[6, 12, 20]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -387,5 +465,7 @@ export default function EnhancedTable() {
         label="Dense padding"
       />
     </div>
+    
+ 
   );
 }
